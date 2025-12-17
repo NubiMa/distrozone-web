@@ -25,6 +25,7 @@ use App\Http\Controllers\Api\ShippingController;
 // Public routes (Guest access)
 Route::prefix('v1')->group(function () {
     
+    
     // Authentication
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
