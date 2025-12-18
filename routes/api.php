@@ -25,7 +25,6 @@ use App\Http\Controllers\Api\ShippingController;
 // Public routes (Guest access)
 Route::prefix('v1')->group(function () {
     
-    
     // Authentication
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
@@ -42,6 +41,9 @@ Route::prefix('v1')->group(function () {
     // Shipping information
     Route::get('/shipping/destinations', [ShippingController::class, 'destinations']);
     Route::post('/shipping/calculate', [ShippingController::class, 'calculate']);
+    
+    // Bank accounts (public - needed for payment)
+    Route::get('/bank-accounts', [PaymentController::class, 'bankAccounts']);
 });
 
 // Protected routes (Authenticated users)
@@ -82,7 +84,6 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         // Payments
         Route::post('/orders/{orderNumber}/payment/upload', [PaymentController::class, 'uploadProof']);
         Route::get('/orders/{orderNumber}/payment', [PaymentController::class, 'show']);
-        Route::get('/bank-accounts', [PaymentController::class, 'bankAccounts']);
     });
     
     // Cashier routes
