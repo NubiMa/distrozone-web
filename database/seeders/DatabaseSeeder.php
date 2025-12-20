@@ -12,6 +12,8 @@ use App\Models\ProductImage;
 use App\Models\ShippingRate;
 use App\Models\BankAccount;
 use App\Models\Setting;
+use App\Models\Order;
+use App\Models\OrderItem;
 
 class DatabaseSeeder extends Seeder
 {
@@ -235,5 +237,47 @@ class DatabaseSeeder extends Seeder
         foreach ($settings as $setting) {
             Setting::create($setting);
         }
+    }
+}
+
+// Create a test customer order
+$customer = User::where('email', 'customer@example.com')->first();
+
+if ($customer) {
+    $order = Order::create([
+        'order_number' => 'DZ-88329',
+        'user_id' => $customer->id,
+        'status' => 'pending_payment',
+        'subtotal' => 125000,
+        'shipping_cost' => 12000,
+        'total' => 147000,
+        'recipient_name' => 'Jane Doe',
+        'recipient_phone' => '081234567890',
+        'shipping_address' => '123 Streetwear Blvd, Apt 4B',
+        'city' => 'Jakarta Selatan',
+        'province' => 'DKI Jakarta',
+        'postal_code' => '12190',
+        'total_weight' => 900,
+        'shipping_weight' => 1,
+    ]);
+
+    // Add order items
+    $product = Product::first();
+    if ($product && $product->variants->count() > 0) {
+        $variant = $product->variants->first();
+        
+        OrderItem::create([
+            'order_id' => $order->id,
+            'product_id' => $product->id,
+            'product_variant_id' => $variant->id,
+            'product_name' => $product->name,
+            'product_sku' => $variant->sku,
+            'variant_color' => $variant->color,
+            'variant_size' => $variant->size,
+            'quantity' => 1,
+            'price' => $variant->price,
+            'cost_price' => $product->cost_price,
+            'subtotal' => $variant->price,
+        ]);
     }
 }

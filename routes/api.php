@@ -21,6 +21,10 @@ use App\Http\Controllers\CategoryWebController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Customer\ProfileController;
+use App\Http\Controllers\Customer\AddressController;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -30,6 +34,27 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 
 // Public routes (Guest access)
 Route::prefix('v1')->group(function () {
+
+    Route::get('/', function () {
+        return view('welcome');
+    })->name('home');
+
+    // Temporary routes for testing
+    Route::get('/shop', function() {
+        return view('guest.shop');
+    })->name('shop');
+
+    Route::get('/collections', function() {
+        return view('guest.collections');
+    })->name('collections');
+
+    Route::get('/about', function() {
+        return view('guest.about');
+    })->name('about');
+
+    Route::get('/journal', function() {
+        return view('guest.journal');
+    })->name('journal');
     
     // Authentication
     Route::post('/register', [AuthController::class, 'register']);
@@ -83,6 +108,8 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         // Profile
         Route::get('/profile', [CustomerController::class, 'profile']);
         Route::put('/profile', [CustomerController::class, 'updateProfile']);
+        Route::put('/password', [ProfileController::class, 'updatePassword'])->name('password.update');
+
         
         // Addresses
         Route::get('/addresses', [CustomerController::class, 'addresses']);
@@ -108,7 +135,17 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         // Payments
         Route::post('/orders/{orderNumber}/payment/upload', [PaymentController::class, 'uploadProof']);
         Route::get('/orders/{orderNumber}/payment', [PaymentController::class, 'show']);
+
+        // Wishlist
+        Route::get('/wishlist', function() {
+            return view('customer.wishlist');
+        })->name('wishlist');
     });
+
+    // Checkout route (needs operating hours middleware)
+    Route::get('/checkout', function() {
+        return view('guest.checkout');
+    })->name('checkout');
     
     // Cashier routes
     Route::middleware('role:cashier,admin')->prefix('cashier')->group(function () {
@@ -186,3 +223,11 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     // Logout (Authenticated only)
     Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->name('logout');
 });
+
+/*
+|--------------------------------------------------------------------------
+| Auth Routes
+|--------------------------------------------------------------------------
+*/
+
+// require __DIR__.'/auth.php';
