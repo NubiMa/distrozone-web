@@ -4,10 +4,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\CategoryController;
-use App\Http\Controllers\Api\CartController;
-use App\Http\Controllers\Api\OrderController;
-use App\Http\Controllers\Api\PaymentController;
+use App\Http\Controllers\Customer\CartController;
+use App\Http\Controllers\Customer\OrderController;
+use App\Http\Controllers\Customer\PaymentController; 
 use App\Http\Controllers\Api\CustomerController;
+use App\Http\Controllers\Api\Customer\ProfileController;
+use App\Http\Controllers\Api\Customer\AddressController;
 use App\Http\Controllers\Api\Admin\AdminProductController;
 use App\Http\Controllers\Api\Admin\AdminOrderController;
 use App\Http\Controllers\Api\Admin\AdminReportController;
@@ -15,46 +17,15 @@ use App\Http\Controllers\Api\Admin\AdminUserController;
 use App\Http\Controllers\Api\Cashier\CashierOrderController;
 use App\Http\Controllers\Api\Cashier\CashierPaymentController;  
 use App\Http\Controllers\Api\ShippingController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\ProductWebController;
-use App\Http\Controllers\CategoryWebController;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\Auth\ForgotPasswordController;
-use App\Http\Controllers\Customer\ProfileController;
-use App\Http\Controllers\Customer\AddressController;
-
-
 
 /*
 |--------------------------------------------------------------------------
-| API Routes
+| API Routes - For Mobile/External Apps
 |--------------------------------------------------------------------------
 */
 
-// Public routes (Guest access)
+// Public API routes
 Route::prefix('v1')->group(function () {
-
-    Route::get('/', function () {
-        return view('welcome');
-    })->name('home');
-
-    // Temporary routes for testing
-    Route::get('/shop', function() {
-        return view('guest.shop');
-    })->name('shop');
-
-    Route::get('/collections', function() {
-        return view('guest.collections');
-    })->name('collections');
-
-    Route::get('/about', function() {
-        return view('guest.about');
-    })->name('about');
-
-    Route::get('/journal', function() {
-        return view('guest.journal');
-    })->name('journal');
     
     // Authentication
     Route::post('/register', [AuthController::class, 'register']);
@@ -75,32 +46,14 @@ Route::prefix('v1')->group(function () {
     
     // Bank accounts (public - needed for payment)
     Route::get('/bank-accounts', [PaymentController::class, 'bankAccounts']);
-
-    Route::get('/', [HomeController::class, 'index'])->name('home');
-    Route::get('/products', [ProductWebController::class, 'index'])->name('products.index');
-    Route::get('/products/{slug}', [ProductWebController::class, 'show'])->name('products.show');
-    Route::get('/categories', [CategoryWebController::class, 'index'])->name('categories.index');
-    Route::get('/categories/{slug}', [CategoryWebController::class, 'show'])->name('categories.show');
 });
 
-// Protected routes (Authenticated users)
+// Protected API routes (Authenticated users)
 Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     
     // Authentication
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
-
-    // Login
-    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [LoginController::class, 'login']);
-    
-    // Register
-    Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-    Route::post('/register', [RegisterController::class, 'register']);
-    
-    // Forgot Password
-    Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
-    Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
     
     // Customer routes
     Route::middleware('role:customer')->prefix('customer')->group(function () {
@@ -108,8 +61,6 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         // Profile
         Route::get('/profile', [CustomerController::class, 'profile']);
         Route::put('/profile', [CustomerController::class, 'updateProfile']);
-        Route::put('/password', [ProfileController::class, 'updatePassword'])->name('password.update');
-
         
         // Addresses
         Route::get('/addresses', [CustomerController::class, 'addresses']);
@@ -135,17 +86,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         // Payments
         Route::post('/orders/{orderNumber}/payment/upload', [PaymentController::class, 'uploadProof']);
         Route::get('/orders/{orderNumber}/payment', [PaymentController::class, 'show']);
-
-        // Wishlist
-        Route::get('/wishlist', function() {
-            return view('customer.wishlist');
-        })->name('wishlist');
     });
-
-    // Checkout route (needs operating hours middleware)
-    Route::get('/checkout', function() {
-        return view('guest.checkout');
-    })->name('checkout');
     
     // Cashier routes
     Route::middleware('role:cashier,admin')->prefix('cashier')->group(function () {
@@ -219,15 +160,4 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         // Dashboard
         Route::get('/dashboard/stats', [AdminOrderController::class, 'dashboardStats']);
     });
-
-    // Logout (Authenticated only)
-    Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->name('logout');
 });
-
-/*
-|--------------------------------------------------------------------------
-| Auth Routes
-|--------------------------------------------------------------------------
-*/
-
-// require __DIR__.'/auth.php';

@@ -4,11 +4,11 @@
 @section('title', 'Create Your Account')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 items-center justify-center px-14 py-15">
     <div class="max-w-6xl mx-auto">
-        <div class="grid lg:grid-cols-2 gap-8 items-center">
+        <!-- <div class="flex items-center justify-center"> -->
             {{-- Left Side - Image --}}
-            <div class="hidden lg:block">
+            <!-- <div class="hidden lg:block">
                 <div class="bg-gray-900 rounded-2xl overflow-hidden shadow-2xl h-full min-h-[600px] relative">
                     <img 
                         src="https://images.unsplash.com/photo-1622445275463-afa2ab738c34?w=800&h=1000&fit=crop" 
@@ -25,7 +25,7 @@
                         <span class="text-white text-xl font-bold">DistroZone</span>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
             {{-- Right Side - Form --}}
             <div class="bg-white rounded-2xl shadow-xl p-8 lg:p-10 animate-slide-in">
@@ -199,7 +199,7 @@
                     </p>
                 </form>
             </div>
-        </div>
+        <!-- </div> -->
     </div>
 </div>
 

@@ -17,6 +17,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\RoleMiddleware::class,
             'operating.hours' => \App\Http\Middleware\CheckOperatingHours::class,
         ]);
+        
+        // API routes should use Sanctum stateful middleware
+        $middleware->statefulApi();
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
